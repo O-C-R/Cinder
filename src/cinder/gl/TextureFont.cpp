@@ -137,7 +137,7 @@ TextureFont::TextureFont( const Font &font, const string &supportedChars, const 
 					offset += 2;
 				}
 			}
-			mTextures.push_back( gl::Texture::create( lumAlphaData.get(), dataFormat, mFormat.getTextureWidth(), mFormat.getTextureHeight(), textureFormat ) );
+			mTextures.push_back( gl::Texture::create( lumAlphaData.get(), mFormat.getTextureWidth(), mFormat.getTextureHeight(), textureFormat ) );
 			mTextures.back()->setTopDown( true );
 
 			ip::fill( &surface, ColorA8u( 0, 0, 0, 0 ) );			

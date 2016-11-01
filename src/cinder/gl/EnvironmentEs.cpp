@@ -95,10 +95,10 @@ class EnvironmentEs : public Environment {
 		
 	void	objectLabel( GLenum identifier, GLuint name, GLsizei length, const char *label ) override;
 	
-	void	allocateTexStorage1d( GLenum target, GLsizei levels, GLenum internalFormat, GLsizei width, bool immutable, GLint texImageDataType ) override;
-	void	allocateTexStorage2d( GLenum target, GLsizei levels, GLenum internalFormat, GLsizei width, GLsizei height, bool immutable, GLint texImageDataType ) override;
-	void	allocateTexStorage3d( GLenum target, GLsizei levels, GLenum internalFormat, GLsizei width, GLsizei height, GLsizei depth, bool immutable ) override;
-	void	allocateTexStorageCubeMap( GLsizei levels, GLenum internalFormat, GLsizei width, GLsizei height, bool immutable ) override;
+	void	allocateTexStorage1d( GLenum target, GLsizei levels, GLenum internalFormat, GLsizei width, bool immutable, GLint texImageDataFormat, GLint texImageDataType ) override;
+	void	allocateTexStorage2d( GLenum target, GLsizei levels, GLenum internalFormat, GLsizei width, GLsizei height, bool immutable, GLint texImageDataFormat, GLint texImageDataType ) override;
+	void	allocateTexStorage3d( GLenum target, GLsizei levels, GLenum internalFormat, GLsizei width, GLsizei height, GLsizei depth, bool immutable, GLint texImageDataFormat, GLint texImageDataType ) override;
+	void	allocateTexStorageCubeMap( GLsizei levels, GLenum internalFormat, GLsizei width, GLsizei height, bool immutable, GLint texImageDataFormat, GLint texImageDataType ) override;
 
 	std::string		generateVertexShader( const ShaderDef &shader ) override;
 	std::string		generateFragmentShader( const ShaderDef &shader ) override;
@@ -244,12 +244,12 @@ void EnvironmentEs::objectLabel( GLenum identifier, GLuint name, GLsizei length,
 #endif
 }
 
-void EnvironmentEs::allocateTexStorage1d( GLenum target, GLsizei levels, GLenum internalFormat, GLsizei width, bool immutable, GLint texImageDataType )
+void EnvironmentEs::allocateTexStorage1d( GLenum target, GLsizei levels, GLenum internalFormat, GLsizei width, bool immutable, GLint texImageDataFormat, GLint texImageDataType )
 {
 	throw gl::Exception( "allocateTexStorage1d unimplemented on OpenGL ES" );
 }
 
-void EnvironmentEs::allocateTexStorage2d( GLenum target, GLsizei levels, GLenum internalFormat, GLsizei width, GLsizei height, bool immutable, GLint texImageDataType )
+void EnvironmentEs::allocateTexStorage2d( GLenum target, GLsizei levels, GLenum internalFormat, GLsizei width, GLsizei height, bool immutable, GLint texImageDataFormat, GLint texImageDataType )
 {
 #if defined( CINDER_GL_ES_2 )
 	// Test at runtime for presence of 'glTexStorage2D' and just force mutable storage if it's not available
@@ -271,6 +271,8 @@ void EnvironmentEs::allocateTexStorage2d( GLenum target, GLsizei levels, GLenum 
 		if( texImageDataType != -1 ) {
 			dataType = texImageDataType;
 		}
+		if( texImageDataFormat != -1 )
+			dataFormat = texImageDataFormat;
 // on ES 2 non-sized formats are required for internalFormat
 #if defined( CINDER_GL_ES_2 )
 		internalFormat = dataFormat;
@@ -279,7 +281,7 @@ void EnvironmentEs::allocateTexStorage2d( GLenum target, GLsizei levels, GLenum 
 	}
 }
 
-void EnvironmentEs::allocateTexStorage3d( GLenum target, GLsizei levels, GLenum internalFormat, GLsizei width, GLsizei height, GLsizei depth, bool immutable )
+void EnvironmentEs::allocateTexStorage3d( GLenum target, GLsizei levels, GLenum internalFormat, GLsizei width, GLsizei height, GLsizei depth, bool immutable, GLint texImageDataFormat, GLint texImageDataType )
 {
 #if defined( CINDER_GL_ES_2 )
 	CI_LOG_E( "allocateTexStorage3d called on unsupported platform" );
@@ -297,12 +299,16 @@ void EnvironmentEs::allocateTexStorage3d( GLenum target, GLsizei levels, GLenum 
 	else {
 		GLenum dataFormat, dataType;
 		TextureBase::getInternalFormatInfo( internalFormat, &dataFormat, &dataType );
+		if( texImageDataType != -1 )
+			dataType = texImageDataType;
+		if( texImageDataFormat != -1 )
+			dataFormat = texImageDataFormat;
 		glTexImage3D( target, 0, internalFormat, width, height, depth, 0, dataFormat, dataType, nullptr );
 	}
 #endif
 }
 
-void EnvironmentEs::allocateTexStorageCubeMap( GLsizei levels, GLenum internalFormat, GLsizei width, GLsizei height, bool immutable )
+void EnvironmentEs::allocateTexStorageCubeMap( GLsizei levels, GLenum internalFormat, GLsizei width, GLsizei height, bool immutable, GLint texImageDataFormat, GLint texImageDataType )
 {
 #if defined( CINDER_GL_ES_2 )
 	// test at runtime for presence of 'glTexStorage2D' and just force mutable storage if it's not available
@@ -320,6 +326,10 @@ void EnvironmentEs::allocateTexStorageCubeMap( GLsizei levels, GLenum internalFo
 	else {
 		GLenum dataFormat, dataType;
 		TextureBase::getInternalFormatInfo( internalFormat, &dataFormat, &dataType );
+		if( texImageDataType != -1 )
+			dataType = texImageDataType;
+		if( texImageDataFormat != -1 )
+			dataFormat = texImageDataFormat;
 		for( int face = 0; face < 6; ++face )
 			glTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, internalFormat, width, height, 0, dataFormat, dataType, nullptr );
 	}
