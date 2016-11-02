@@ -488,6 +488,7 @@ class Texture2d : public TextureBase {
 		Format& internalFormat( GLint internalFormat ) { mInternalFormat = internalFormat; return *this; }
 		//! Specifies the data type parameter used by glTexImage2D when glTexStorage2D is unavailable. Defaults to \c -1 which implies automatic determination. Primary use is to pass \c GL_FLOAT or \c GL_HALF_FLOAT to create 32F or 16F textures on ES 2 when OES_texture_float is available.
 		Format& dataType( GLint dataType ) { mDataType = dataType; return *this; }
+		Format& dataFormat( GLint dataFormat ) { mDataFormat = dataFormat; return *this; }
 		Format& wrap( GLenum wrap ) { mWrapS = mWrapT = mWrapR = wrap; return *this; }
 		Format& wrapS( GLenum wrapS ) { mWrapS = wrapS; return *this; }
 		Format& wrapT( GLenum wrapT ) { mWrapT = wrapT; return *this; }
