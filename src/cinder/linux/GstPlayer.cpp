@@ -1084,7 +1084,8 @@ void GstPlayer::createTextureFromMemory()
 	mMutex.unlock();
 
 	if( mFrontVBuffer ) {
-		videoTexture = ci::gl::Texture::create( mFrontVBuffer, GL_RGBA, width(), height() );
+		auto format = ci::gl::Texture::Format().dataFormat( GL_RGBA ).internalFormat( GL_RGBA ).dataType( GL_UNSIGNED_BYTE );
+		videoTexture = ci::gl::Texture::create( mFrontVBuffer, width(), height(), format );
 		if( videoTexture ) videoTexture->setTopDown();
 	}
 }

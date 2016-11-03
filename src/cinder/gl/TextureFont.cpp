@@ -418,9 +418,11 @@ TextureFont::TextureFont( const Font &font, const string &utf8Chars, const Forma
 			GLint dataFormat;
 #if defined( CINDER_GL_ES )
 			dataFormat = GL_LUMINANCE_ALPHA;
+			textureFormat.setDataFormat( dataFormat );
 			textureFormat.setInternalFormat( dataFormat );
 #else
 			dataFormat = GL_RG;
+			textureFormat.setDataFormat( dataFormat );
 			textureFormat.setInternalFormat( dataFormat );
 			textureFormat.setSwizzleMask( { GL_RED, GL_RED, GL_RED, GL_GREEN } );
 #endif
@@ -437,7 +439,7 @@ TextureFont::TextureFont( const Font &font, const string &utf8Chars, const Forma
 					offset += 2;
 				}
 			}
-			mTextures.push_back( gl::Texture::create( lumAlphaData.get(), dataFormat, mFormat.getTextureWidth(), mFormat.getTextureHeight(), textureFormat ) );
+			mTextures.push_back( gl::Texture::create( lumAlphaData.get(), mFormat.getTextureWidth(), mFormat.getTextureHeight(), textureFormat ) );
 			mTextures.back()->setTopDown( true );
 
 			ip::fill( &surface, ColorA8u( 0, 0, 0, 0 ) );			
