@@ -420,7 +420,8 @@ void VboMesh::buildVao( const GlslProg* shader, const AttribGlslMap &attributeMa
 			
 			if( shaderAttribInfo ) {
 				auto shaderLoc = shaderAttribInfo->getLocation();
-				
+				if( shaderLoc < 0 )
+                    continue;
 				auto numDims = (int)vertAttribInfo.getDims();
 				
 				// examples of glsl types and the expected layout
