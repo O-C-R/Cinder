@@ -307,12 +307,14 @@ TextureFont::TextureFont( const Font &font, const string &utf8Chars, const Forma
 
 #if defined( CINDER_GL_ES )
 			textureFormat.setInternalFormat( GL_LUMINANCE_ALPHA );
+			textureFormat.setDataFormat( GL_LUMINANCE_ALPHA );
 #else
 			textureFormat.setInternalFormat( GL_RG );
+			textureFormat.setDataFormat( GL_RG );
 			array<GLint,4> swizzleMask = { GL_RED, GL_RED, GL_RED, GL_GREEN };
 			textureFormat.setSwizzleMask( swizzleMask );
 #endif
-			mTextures.push_back( gl::Texture::create( lumAlphaData.get(), textureFormat.getInternalFormat(), mFormat.getTextureWidth(), mFormat.getTextureHeight(), textureFormat ) );
+			mTextures.push_back( gl::Texture::create( lumAlphaData.get(), mFormat.getTextureWidth(), mFormat.getTextureHeight(), textureFormat ) );
 			mTextures.back()->setTopDown( true );
 			ip::fill<uint8_t>( &channel, 0 );			
 			curOffset = ivec2( 0, 0 );
