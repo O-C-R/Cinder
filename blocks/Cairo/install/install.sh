@@ -100,11 +100,6 @@ buildOSX()
 {
 	echo Setting up OSX environment...
 	
-  # On osx, i want to make sure the zlib version, we use
-if [ $WITH_PANGO = false ]; then
-  downloadZlib
-	buildZlib
-fi
 	buildLibPng
 	buildPixman 
 	
@@ -132,20 +127,10 @@ buildLinux()
 ## downloading libs
 #########################
 
-downloadZlib()
-{
-	echo Downloading zlib...
-	curl http://zlib.net/zlib-1.2.8.tar.gz -o zlib.tar.gz > /dev/null
-	tar -xf zlib.tar.gz
-	mv zlib-* zlib
-	rm zlib.tar.gz
-	echo Finished Downloading zlib...
-}
-
 downloadLibPng() 
 {
 	echo Downloading libpng...
-	curl ftp://ftp.simplesystems.org/pub/libpng/png/src/libpng16/libpng-1.6.26.tar.gz -o libpng.tar.gz > /dev/null
+	curl ftp://ftp.simplesystems.org/pub/libpng/png/src/libpng16/libpng-1.6.28.tar.gz -o libpng.tar.gz > /dev/null
 	tar -xf libpng.tar.gz 
 	mv libpng-* libpng
 	rm libpng.tar.gz 
@@ -192,20 +177,6 @@ downloadLibCairo()
 #########################
 ## building libs
 #########################
-
-buildZlib()
-{
- 	cd zlib
-	echo "Building zlib, and installing $1"
-	
-	./configure --prefix=${PREFIX_LIBZ}
-
-	make -j 6
-	make install
-	make clean
-
-	cd ..	
-}
 
 buildLibPng()
 {
