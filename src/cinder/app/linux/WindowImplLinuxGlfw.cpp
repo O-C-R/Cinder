@@ -24,12 +24,14 @@
 #include "cinder/app/RendererGl.h"
 #include "cinder/app/linux/WindowImplLinux.h"
 #include "cinder/app/linux/AppImplLinux.h"
+#include "cinder/app/linux/PlatformLinux.h"
 
 namespace cinder { namespace app {
 
 WindowImplLinux::WindowImplLinux( const Window::Format &format, RendererRef sharedRenderer, AppImplLinux *appImpl )
 	: mAppImpl( appImpl )
 {
+	mFullScreen = format.isFullScreen();
 	mDisplay = format.getDisplay();
 	mRenderer = format.getRenderer();
 
@@ -74,8 +76,19 @@ WindowImplLinux::WindowImplLinux( const Window::Format &format, RendererRef shar
     ::glfwWindowHint( GLFW_SAMPLES, options.getMsaa() );
 
 	auto windowSize = format.getSize();
-	mGlfwWindow = ::glfwCreateWindow( windowSize.x, windowSize.y, format.getTitle().c_str(), NULL, NULL );
-
+	if( mFullScreen ) {
+		::GLFWmonitor *glfwMonitor{ nullptr };
+		if( mDisplay ) {
+			auto linuxDisplay = std::dynamic_pointer_cast<DisplayLinux>( mDisplay );
+			if( linuxDisplay )
+				glfwMonitor = linuxDisplay->getGlfwMonitor();
+		}
+			
+		mGlfwWindow = ::glfwCreateWindow( windowSize.x, windowSize.y, format.getTitle().c_str(), glfwMonitor ? glfwMonitor : ::glfwGetPrimaryMonitor(), NULL );
+	}
+	else {
+		mGlfwWindow = ::glfwCreateWindow( windowSize.x, windowSize.y, format.getTitle().c_str(), NULL, NULL );
+	}
 	mRenderer->setup( mGlfwWindow, sharedRenderer );
 
 	// set WindowRef and its impl pointer to this
